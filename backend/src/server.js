@@ -19,9 +19,43 @@ const jwtSecretToken = 'password';
 const refreshSecretToken = 'refreshpassword';
 let refreshTokens = [];
 
-// const https = require('https');
-// const fs = require('fs');
-// const path = require('path');
+
+/// swagger config
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
+const options = {
+  "definition": {
+      "openapi": "3.1.0",
+      "info": {
+          "title": "Tender App API",
+          "description": "API endpoints",
+          "version": "1.0.0"
+      },
+      "server": [
+          {
+              "url": "http://127.0.0.1:3001"
+          }
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            in: 'header',
+            name: 'Authorization',
+            description: 'Bearer token to access these api endpoints',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
+  },
+  "apis": ["./src/*.js"]
+}
 
 // Express Application init
 dotenv.config();
@@ -29,6 +63,11 @@ const app = express();
 app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use(cors());
+
+// swagger
+let swaggerDocument = swaggerJsDoc(options);
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.listen(3001, () => console.log('Backend server running on 3001'));
 
@@ -40,15 +79,6 @@ const { capitalize, getMessage } = require('../utils');
 const network = require('../../fabric/tenderapp/application-javascript/app.js');
 const { buildWallet } = require('./fabric_util');
 
-// TODO: We can start the server with https so encryption will be done for the data transferred ove the network
-// TODO: followed this link https://timonweb.com/javascript/running-expressjs-server-over-https/ to create certificate and added in the code
-/* https.createServer({
-  key: fs.readFileSync(path.join(__dirname, 'ssl', 'server.key')),
-  cert: fs.readFileSync(path.join(__dirname, 'ssl', 'server.cert')),
-}, app)
-  .listen(3001, function() {
-    console.log('Backend server running on 3001! Go to https://localhost:3001/');
-  });*/
 
 
 const authenticateJWT = (req, res, next) => {
@@ -125,7 +155,7 @@ app.post('/login', async (req, res) => {
       refreshToken,
     });
   } else {
-    res.status(401).send({ error: 'Username or password incorrect!' });
+    res.status(401).send({ message: 'Invalid credentials.' });
   }
 });
 
