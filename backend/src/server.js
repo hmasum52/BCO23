@@ -69,7 +69,7 @@ let swaggerDocument = swaggerJsDoc(options);
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-app.listen(3001, () => console.log('Backend server running on 3001'));
+app.listen(8080, () => console.log('Backend server running on 8080'));
 
 // Bring key classes into scope
 
@@ -195,3 +195,4 @@ app.delete('/logout', (req, res) => {
 
 // //////////////////////////////// Admin Routes //////////////////////////////////////
 app.get('/tenders', authenticateJWT, adminRoutes.getAllTenderProposals);
+app.post('/tenders/create', authenticateJWT, adminRoutes.createTenderProposal);

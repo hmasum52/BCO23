@@ -22,7 +22,7 @@ class AdminContract extends PrimaryContract {
     async createTenderProposal(ctx, args) {
         args = JSON.parse(args);
 
-        let newTenderProposal = await new TenderProposal(
+        let newTenderProposal = new TenderProposal(
             args.tender_proposal_id,
             args.reference_no,
             args.public_status,
@@ -38,10 +38,18 @@ class AdminContract extends PrimaryContract {
         );
         const exists = await this.tenderProposalExists(ctx, newTenderProposal.tender_proposal_id);
         if (exists) {
-            throw new Error(`The tender ${newTenderProposal.tender_proposal_id} already exists`);
+            //throw new Error(`The tender ${newTenderProposal.tender_proposal_id} already exists`);
+            return {
+                success: false,
+                message: "TenderProposal already exists"
+            }
         }
         const buffer = Buffer.from(JSON.stringify(newTenderProposal));
         await ctx.stub.putState(newTenderProposal.tender_proposal_id, buffer);
+        return {
+            success: true,
+            message: "TenderProposal submitted successfully"
+        }
     }
 
 
@@ -56,9 +64,17 @@ class AdminContract extends PrimaryContract {
     async deleteTenderProposal(ctx, tenderProposalId) {
         const exists = await this.tenderProposalExists(ctx, tenderProposalId);
         if (!exists) {
-            throw new Error(`The tender ${tenderProposalId} does not exist`);
+            //throw new Error(`The tender ${tenderProposalId} does not exist`);
+            return {
+                success: false,
+                message: "TenderProposal does not exist"
+            }
         }
         await ctx.stub.deleteState(tenderProposalId);
+        return {
+            success: true,
+            message: "TenderProposal deleted successfully"
+        }
     }
 
 

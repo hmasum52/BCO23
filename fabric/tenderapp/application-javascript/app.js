@@ -94,11 +94,9 @@ exports.invoke = async function (networkObj, isQuery, func, args = '') {
       await networkObj.gateway.disconnect();
       return response;
     } else {
-      if (args) {
-        args = JSON.parse(args[0]);
-        args = JSON.stringify(args);
-      }
+      console.log('invoking submitTransaction with arguments ');
       const response = await networkObj.contract.submitTransaction(func, args);
+      console.log('submitTransaction success ');
       await networkObj.gateway.disconnect();
       return response;
     }
