@@ -69,17 +69,14 @@ class AdminContract extends PrimaryContract {
         queryString.selector.organization = orgName;
         const buffer = await this.getQueryResultForQueryString(ctx, JSON.stringify(queryString));
         let asset = JSON.parse(buffer.toString());
-        return asset;
+        return asset.map(item => item.Record);;
     }
 
     //Retrieves all TenderProposal details
     async queryAllTenderProposals(ctx) {
         let resultsIterator = await ctx.stub.getStateByRange('', '');
         let asset = await this.getAllTenderProposals(resultsIterator, false);
-        return asset;
+        return asset.map(item => item.Record);
     }
-
-
-
 }
 module.exports = AdminContract;

@@ -3,8 +3,6 @@
  * @author Hasan Masum(github: hmasum52)
  */
 
-
-const crypto = require('crypto');
 class TenderProposal {
     constructor(
         tender_proposal_id,
