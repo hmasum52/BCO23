@@ -32,6 +32,99 @@ exports.getAllTenderProposals = async (req, res) => {
   res.status(200).send(parsedResponse);
 };
 
+// get tender by id
+/**
+ * @swagger
+ * /tenders/{id}:
+ *   get:
+ *     summary: Get a specific tender by ID
+ *     description: Use this endpoint to get details of a specific tender by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the tender to retrieve.
+ *         schema:
+ *           type: integer
+ *           format: int64
+ *     tags:
+ *       - Tender Proposal
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TenderProposal'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The error message indicating unauthorized access.
+ *                   example: Unauthorized. Please provide a valid token.
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The error message indicating forbidden access.
+ *                   example: Access forbidden. You do not have permission to access this resource.
+ *       404:
+ *         description: Not Found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The error message indicating that the tender with the given ID was not found.
+ *                   example: Tender not found. Please provide a valid tender ID.
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: The error message indicating internal server error.
+ *                   example: Internal Server Error. Please try again later.
+ */
+exports.getTenderProposalById = async (req, res) => {
+  // User role from the request header is validated
+  const userRole = req.headers.role;
+  await validateRole([ROLE_ADMIN], userRole, res);
+  // Set up and connect to Fabric Gateway using the username in header
+  const networkObj = await network.connectToNetwork(req.headers.username);
+  // Invoke the smart contract function
+  console.log("invoking queryTenderProposal contract as admin.")
+  const response = await network.invoke(
+                      networkObj,
+                      true,
+                      capitalize(userRole) + 'Contract:readTenderProposal',
+                      req.params.id
+                    );
+  const parsedResponse = await JSON.parse(response);
+  if(parsedResponse.success === false){
+    res.status(404).send(parsedResponse);
+  } else {
+    res.status(200).send(parsedResponse.tender);
+  }
+}
+
 
 // create a tender proposal by invoking Contract:createTenderProposal chaincode method
 
@@ -125,3 +218,4 @@ exports.createTenderProposal = async (req, res) => {
     });
   }
 }
+

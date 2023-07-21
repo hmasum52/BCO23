@@ -23,7 +23,10 @@ class PrimaryContract extends Contract {
     async readTenderProposal(ctx, tenderProposalId) {
         const exists = await this.tenderProposalExists(ctx, tenderProposalId);
         if (!exists) {
-            throw new Error(`The tender ${proposalId} does not exist`);
+            return {
+                success: false,
+                message: " Tender not found. Please provide a valid tender ID."
+            }
         }
 
         const buffer = await ctx.stub.getState(tenderProposalId);
@@ -42,7 +45,10 @@ class PrimaryContract extends Contract {
             publishing_date_and_time : asset.publishing_date_and_time,
             closing_date_and_time : asset.closing_date_and_time,
         });
-        return asset;
+        return {
+            success: true,
+            tender: asset
+        };
     }
 
     async tenderProposalExists(ctx, proposalId) {

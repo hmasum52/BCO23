@@ -196,3 +196,5 @@ app.delete('/logout', (req, res) => {
 // //////////////////////////////// Admin Routes //////////////////////////////////////
 app.get('/tenders', authenticateJWT, adminRoutes.getAllTenderProposals);
 app.post('/tenders/create', authenticateJWT, adminRoutes.createTenderProposal);
+// get tender by id
+app.get('/tenders/:id', authenticateJWT, adminRoutes.getTenderProposalById);
