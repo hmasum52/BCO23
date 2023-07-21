@@ -33,7 +33,7 @@ const options = {
       },
       "server": [
           {
-              "url": "http://127.0.0.1:3001"
+              "url": "http://127.0.0.1:8052"
           }
       ],
       components: {
@@ -69,7 +69,7 @@ let swaggerDocument = swaggerJsDoc(options);
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
-app.listen(8080, () => console.log('Backend server running on 8080'));
+app.listen(8052, () => console.log('Backend server running on 8052'));
 
 // Bring key classes into scope
 

@@ -56,6 +56,38 @@ npm start
 - `Org2` is a `Goverment agency who creates procurements`
 
 ## Chaincode
+> Ledger data: [TenderProposal.js](/fabric/chaincode/tenderapp/javascript/lib/TenderProposal.js)
+```
+class TenderProposal {
+    constructor(
+        tender_proposal_id,
+        reference_no,
+        public_status,
+        procurement_nature,
+        title,
+        ministry,
+        division,
+        organization,
+        type,
+        method,
+        publishing_date_and_time,
+        closing_date_and_time
+    ) {
+        this.tender_proposal_id = tender_proposal_id;
+        this.reference_no = reference_no;
+        this.public_status = public_status;
+        this.procurement_nature = procurement_nature;
+        this.title = title;
+        this.ministry = ministry;
+        this.division = division;
+        this.organization = organization;
+        this.type = type;
+        this.method = method;
+        this.publishing_date_and_time = publishing_date_and_time;
+        this.closing_date_and_time = closing_date_and_time;
+    }
+}
+```
 > [primary-contract.js](/fabric/chaincode/tenderapp/javascript/lib/primary-contract.js)
 ```
 class PrimaryContract extends Contract {
